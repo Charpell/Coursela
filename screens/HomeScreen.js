@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import { Icon } from 'expo';
 import { NotificationIcon } from '../components/Icons';
 import { connect } from 'react-redux';
+import gql from 'graphql-tag';
+import { Query } from "react-apollo";
+
 
 
 import Card from '../components/Card'
@@ -11,6 +14,42 @@ import Logo from '../components/Logo';
 import Course from '../components/Course';
 import Menu from '../components/Menu';
 import Avatar from '../components/Avatar';
+
+
+const CardsQuery = gql`
+  {
+    cardsCollection {
+      items {
+        title
+        subtitle
+        image {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        subtitle
+        caption
+        logo {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        content
+      }
+    }
+  }
+`;
+
 
 
 function mapStateToProps(state) {
@@ -98,17 +137,18 @@ class HomeScreen extends Component {
                 />
               </TitleBar>
               <ScrollView
-                style={{ flexDirection: "row", padding: 20, paddingLeft: 12, paddingTop: 30 }}
+                style={{
+                  flexDirection: "row",
+                  padding: 20,
+                  paddingLeft: 12,
+                  paddingTop: 30
+                }}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
               >
-                <Logo 
-                  image={require('../assets/logo-framerx.png')}
-                  text="Framer X"
-                />
-                <Logo 
-                  image={require('../assets/logo-framerx.png')}
-                  text="Framer X"
-                />
+                {logos.map((logo, index) => (
+                  <Logo key={index} image={logo.image} text={logo.text} />
+                ))}
               </ScrollView>
               <Subtitle>Continue Learning</Subtitle>
               <ScrollView
@@ -116,21 +156,38 @@ class HomeScreen extends Component {
                 style={{ paddingBottom: 30 }}
                 showsHorizontalScrollIndicator={false}
               >
-                {cards.map((card, index) => (
-                  <TouchableOpacity key={index} onPress={() => {
-                    this.props.navigation.push("Section", {
-                      section: card
-                    })
-                  }}>
-                    <Card 
-                      title={card.title}
-                      image={card.image}
-                      logo={card.logo}
-                      caption={card.caption}
-                      subtitle={card.subtitle}
-                    />
-                  </TouchableOpacity>
-                ))}
+                <Query query={CardsQuery}>
+                  {({ loading, error, data }) => {
+                    if (loading) return <Message>Loading...</Message>;
+                    if (error) return <Message>Error...</Message>;
+
+                    // console.log(data.cardsCollection.items);
+
+                    return (
+                      <CardsContainer>
+                        {data.cardsCollection.items.map((card, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                              this.props.navigation.push("Section", {
+                                section: card
+                              });
+                            }}
+                          >
+                            <Card
+                              title={card.title}
+                              image={{ uri: card.image.url }}
+                              caption={card.caption}
+                              logo={{ uri: card.logo.url }}
+                              subtitle={card.subtitle}
+                              content={card.content}
+                            />
+                          </TouchableOpacity>
+                        ))}
+                      </CardsContainer>
+                    );
+                  }}
+                </Query>
               </ScrollView>
               <Subtitle>Popular Courses</Subtitle>
               {courses.map((course, index) => (
@@ -199,7 +256,17 @@ const TitleBar = styled.View`
   padding-left: 80px;
 `
 
+const CardsContainer = styled.View`
+  flex-direction: row;
+  padding-left: 10px;
+`;
 
+const Message = styled.Text`
+  margin: 20px;
+  color: #b8bece;
+  font-size: 15px;
+  font-weight: 500;
+`;
 
 const logos = [
   {
