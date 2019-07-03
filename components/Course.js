@@ -22,7 +22,7 @@ export default Course
 
 
 const Container = styled.View`
-  width: 315px;
+  width: 335px;
   height: 335px;
   background: white;
   margin: 10px 20px;
