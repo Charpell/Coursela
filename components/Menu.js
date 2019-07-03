@@ -2,10 +2,23 @@ import React, { Component } from 'react'
 import { Animated, TouchableOpacity, Dimensions } from 'react-native'
 import styled from 'styled-components';
 import { Icon } from 'expo';
+import { connect } from 'react-redux';
 
 import MenuItem from './MenuItem';
 
 const screenHeight = Dimensions.get("window").height;
+
+function mapStateToProps(state) {
+  return { action: state.action }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    closeMenu: () => dispatch({
+      type: "CLOSE_MENU"
+    })
+  }
+}
 
 class Menu extends Component {
   state = {
@@ -13,15 +26,25 @@ class Menu extends Component {
   };
   
   componentDidMount() {
-    Animated.spring(this.state.top, {
-      toValue: 0
-    }).start()
+    this.toggleMenu();
+  }
+
+  componentDidUpdate() {
+    this.toggleMenu();
   }
 
   toggleMenu = () => {
-    Animated.spring(this.state.top, {
-      toValue: screenHeight
-    }).start();
+    if (this.props.action == "openMenu") {
+      Animated.spring(this.state.top, {
+        toValue: 54
+      }).start()
+    }
+    
+    if (this.props.action == "closeMenu") {
+      Animated.spring(this.state.top, {
+        toValue: screenHeight
+      }).start();
+    }
   }
   
   render() {
@@ -33,7 +56,7 @@ class Menu extends Component {
           <Subtitle>Designer at Design+Code</Subtitle>
         </Cover>
         <TouchableOpacity 
-          onPress={this.toggleMenu}
+          onPress={this.props.closeMenu}
           style={{ position: 'absolute', top: 120, left: "50%", marginLeft: -22, zIndex: 1 }}
         >
           <CloseView>
@@ -55,7 +78,7 @@ class Menu extends Component {
   }
 }
 
-export default Menu;
+export default connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 
 const Image = styled.Image`
@@ -93,6 +116,8 @@ const Container = styled.View`
   width: 100%;
   height: 100%;
   z-index: 100;
+  border-radius: 10px;
+  overflow: hidden;
 `
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container)
