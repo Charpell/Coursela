@@ -161,8 +161,6 @@ class HomeScreen extends Component {
                     if (loading) return <Message>Loading...</Message>;
                     if (error) return <Message>Error...</Message>;
 
-                    // console.log(data.cardsCollection.items);
-
                     return (
                       <CardsContainer>
                         {data.cardsCollection.items.map((card, index) => (
