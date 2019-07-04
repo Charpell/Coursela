@@ -3,6 +3,9 @@ import { TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-nati
 import styled from 'styled-components';
 import { BlurView } from "expo";
 
+import Success from './Success';
+import Loading from './Loading';
+
 
 export default class ModalLogin extends Component {
   state = {
@@ -10,10 +13,19 @@ export default class ModalLogin extends Component {
     password: "",
     iconEmail: require("../assets/icon-email.png"),
     IconPassword: require("../assets/icon-password.png"),
+    isSuccessful: false,
+    isLoading: false
   }
 
   handleLogin = () => {
     console.log('state', this.state)
+
+    this.setState({ isLoading: true })
+
+    setTimeout(() => {
+      this.setState({ isLoading: false })
+      this.setState({ isSuccessful: true })
+    }, 2000)
   }
 
   focusEmail = () => {
@@ -71,6 +83,8 @@ export default class ModalLogin extends Component {
               </Button>
             </TouchableOpacity>
         </Modal>
+        <Success isActive={this.state.isSuccessful} />
+        <Loading isActive={this.state.isLoading} />
       </Container>
     )
   }
