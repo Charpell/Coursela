@@ -61,7 +61,11 @@ function mapDispatchToProps(dispatch) {
   return {
     openMenu: () => dispatch({
       type: "OPEN_MENU"
-    })
+    }),
+    openLogin: () =>
+      dispatch({
+        type: "OPEN_LOGIN"
+      })
   }
 }
 
@@ -128,7 +132,7 @@ class HomeScreen extends Component {
             <ScrollView>
               <TitleBar>
                 <TouchableOpacity
-                  onPress={this.props.openMenu}
+                  onPress={this.props.openLogin}
                   style={{ position: "absolute", top: 0, left: 10 }}
                 >
                   <Avatar />
