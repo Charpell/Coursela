@@ -118,6 +118,14 @@ class HomeScreen extends Component {
     StatusBar.setBarStyle("dark-content", true)
   }
 
+  handleAvatar = () => {
+    if (this.props.name !== "Stranger") {
+      this.props.openMenu();
+    } else {
+      this.props.openLogin();
+    }
+  };
+
   render() {
     return (
       <RootView>
@@ -132,7 +140,7 @@ class HomeScreen extends Component {
             <ScrollView>
               <TitleBar>
                 <TouchableOpacity
-                  onPress={this.props.openLogin}
+                  onPress={this.handleAvatar}
                   style={{ position: "absolute", top: 0, left: 10 }}
                 >
                   <Avatar />

@@ -3,6 +3,9 @@ import { TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert, Animated, 
 import styled from 'styled-components';
 import { BlurView } from "expo";
 import { connect } from "react-redux";
+import firebase from "./Firebase";
+import { AsyncStorage } from "react-native";
+
 
 
 import Success from './Success';
@@ -19,7 +22,17 @@ function mapDispatchToProps(dispatch) {
     closeLogin: () =>
       dispatch({
         type: "CLOSE_LOGIN"
-      })
+      }),
+      updateName: name =>
+        dispatch({
+          type: "UPDATE_NAME",
+          name
+        }),
+      updateAvatar: avatar =>
+        dispatch({
+          type: "UPDATE_AVATAR",
+          avatar
+        })
   };
 }
 class ModalLogin extends Component {
@@ -35,23 +48,61 @@ class ModalLogin extends Component {
     translateY: new Animated.Value(0)
   }
 
-  handleLogin = () => {
-    console.log('state', this.state)
-
-    this.setState({ isLoading: true })
-
-    setTimeout(() => {
-      this.setState({ isLoading: false })
-      this.setState({ isSuccessful: true })
-
-      Alert.alert('Congrats', "You'vs logged successfully")
-
-      setTimeout(() => {
-        this.props.closeLogin();
-        this.setState({ isSuccessful: false });
-      }, 1000)
-    }, 2000)
+  componentDidMount() {
+    this.retrieveName();
   }
+
+  storeName = async name => {
+    try {
+      await AsyncStorage.setItem("name", name);
+    } catch (error) {}
+  };
+
+  retrieveName = async () => {
+    try {
+      const name = await AsyncStorage.getItem("name");
+      if (name !== null) {
+        console.log(name);
+        this.props.updateName(name);
+      }
+    } catch (error) {}
+  };
+
+  handleLogin = () => {
+    // console.log(this.state.email, this.state.password);
+
+    this.setState({ isLoading: true });
+
+    const email = this.state.email;
+    const password = this.state.password;
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .catch(function(error) {
+        Alert.alert("Error", error.message);
+      })
+      .then(response => {
+        // console.log(response);
+
+        this.setState({ isLoading: false });
+
+        if (response) {
+          this.setState({ isSuccessful: true });
+
+          Alert.alert("Congrats", "You've logged successfully!");
+
+          this.storeName(response.user.email);
+          // this.fetchUser();
+          this.props.updateName(response.user.email);
+
+          setTimeout(() => {
+            this.props.closeLogin();
+            this.setState({ isSuccessful: false });
+          }, 1000);
+        }
+      });
+  };
 
   componentDidUpdate() {
     if (this.props.action === "openLogin") {

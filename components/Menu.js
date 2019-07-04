@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Animated, TouchableOpacity, Dimensions } from 'react-native'
+import { Animated, TouchableOpacity, Dimensions, AsyncStorage } from 'react-native'
 import styled from 'styled-components';
 import { Icon } from 'expo';
 import { connect } from 'react-redux';
@@ -22,7 +22,17 @@ function mapDispatchToProps(dispatch) {
   return {
     closeMenu: () => dispatch({
       type: "CLOSE_MENU"
-    })
+    }),
+    updateName: name =>
+      dispatch({
+        type: "UPDATE_NAME",
+        name
+      }),
+    updateAvatar: avatar =>
+      dispatch({
+        type: "UPDATE_AVATAR",
+        avatar
+      })
   }
 }
 
@@ -52,6 +62,17 @@ class Menu extends Component {
       }).start();
     }
   }
+
+  handleMenu = index => {
+    if (index === 3) {
+      this.props.closeMenu();
+      this.props.updateName("Stranger");
+      this.props.updateAvatar(
+        "https://cl.ly/55da82beb939/download/avatar-default.jpg"
+      );
+      AsyncStorage.clear();
+    }
+  };
   
   render() {
     return (
@@ -70,13 +91,15 @@ class Menu extends Component {
           </CloseView>
         </TouchableOpacity>
         <Content>
-          {items.map((item, index) => (
-            <MenuItem 
+        {items.map((item, index) => (
+            <TouchableOpacity
               key={index}
-              icon={item.icon}
-              title={item.title}
-              text={item.text}
-            />
+              onPress={() => {
+                this.handleMenu(index);
+              }}
+            >
+              <MenuItem icon={item.icon} title={item.title} text={item.text} />
+            </TouchableOpacity>
           ))}
         </Content>
       </AnimatedContainer> 
