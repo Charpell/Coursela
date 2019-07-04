@@ -15,6 +15,8 @@ import Course from '../components/Course';
 import Menu from '../components/Menu';
 import Avatar from '../components/Avatar';
 import ModalLogin from '../components/ModalLogin';
+import NotificationButton from '../components/NotificationButton'
+import Notifications from '../components/Notifications';
 
 
 const CardsQuery = gql`
@@ -65,6 +67,10 @@ function mapDispatchToProps(dispatch) {
     openLogin: () =>
       dispatch({
         type: "OPEN_LOGIN"
+      }),
+    openNotif: () =>
+      dispatch({
+        type: "OPEN_NOTIF"
       })
   }
 }
@@ -130,6 +136,7 @@ class HomeScreen extends Component {
     return (
       <RootView>
          <Menu />
+         <Notifications />
         <AnimatedContainer 
           style={{ 
             transform: [{ scale: this.state.scale }],
@@ -147,9 +154,12 @@ class HomeScreen extends Component {
                 </TouchableOpacity>
                 <Text>Welcome back,</Text>
                 <Name>{this.props.name}</Name>
-                <NotificationIcon 
-                  style={{ position: "absolute", right: 20, top: 5 }}
-                />
+                <TouchableOpacity
+                  onPress={() => this.props.openNotif()}
+                  style={{ position: 'absolute', right: 20, top: 5 }}
+                >
+                  <NotificationButton />
+                </TouchableOpacity>
               </TitleBar>
               <ScrollView
                 style={{
