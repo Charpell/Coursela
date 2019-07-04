@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Icon } from 'expo';
 import { TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import Markdown from "react-native-showdown";
+import { PlayIcon } from '../components/Icons';
 
 
 
@@ -29,6 +30,18 @@ class SectionScreen extends Component {
           <StatusBar hidden />
           <Cover>
             <Image source={section.image} />
+            <PlayWrapper>
+              <TouchableOpacity
+                underlayColor="transparent"
+                onPress={() => {
+                  this.props.navigation.navigate("Video");
+                }}
+              >
+                <PlayView>
+                  <PlayIcon style={{ marginLeft: -10 }} />
+                </PlayView>
+              </TouchableOpacity>
+            </PlayWrapper>
             <Wrapper>
               <Logo source={section.logo} />
               <Subtitle>{section.subtitle}</Subtitle>
@@ -185,4 +198,21 @@ const Subtitle = styled.Text`
   color: rgba(255, 255, 255, 0.8);
   margin-left: 5px;
   text-transform: uppercase;
+`;
+
+const PlayWrapper = styled.View`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -40px;
+  margin-left: -40px;
+`;
+
+const PlayView = styled.View`
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 40px;
+  justify-content: center;
+  align-items: center;
 `;

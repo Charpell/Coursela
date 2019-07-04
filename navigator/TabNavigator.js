@@ -7,6 +7,7 @@ import HomeScreen from "../screens/HomeScreen";
 import SectionScreen from "../screens/SectionScreen";
 import CoursesScreen from '../screens/CoursesScreen';
 import ProjectsScreen from '../screens/ProjectsScreen';
+import VideoScreen from '../screens/VideoScreen';
 import { Icon } from "expo";
 
 const activeColor = "#4775f2";
@@ -14,7 +15,8 @@ const inactiveColor = "#b8bece";
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
-  Section: SectionScreen
+  Section: SectionScreen,
+  Video: VideoScreen
 })
 
 HomeStack.navigationOptions = ({ navigation }) => {
